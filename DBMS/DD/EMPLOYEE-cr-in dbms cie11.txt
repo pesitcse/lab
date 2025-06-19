@@ -1,0 +1,112 @@
+
+1.create table employee(
+Fname varchar(20)not null,
+minit varchar(1),
+Lname varchar(15)not null,
+ssn char(9)not null primary key,
+bdate date,
+address varchar(50),
+sex char(1),
+salary decimal(10,2),
+superssn char(9),
+dno int not null);
+
+2.create table department(
+dname varchar(25)not null,
+dnumber int not null,
+mgrssn char(9),
+mgrstart_date date,
+primary key(dnumber),
+unique(dname));
+
+3.create table dependent(
+essn char(9),
+dependent_name varchar(18),
+sex char,
+bdate date,
+relationship varchar(8),
+primary key(essn,dependent_name),
+foreign key(essn)references employee(ssn));
+
+4. create table dept_location(
+dnumber int,
+dlocation varchar(15),
+primary key(dnumber,dlocation),
+foreign key(dnumber)references department
+(dnumber)on delete cascade on update cascade);
+
+5.create table project(
+pname varchar(25)not null,
+pnumber int,
+plocation varchar(15),
+dnum int not null,
+primary key(pnumber),
+unique(pname),
+foreign key(dnum)references department(dnumber));
+
+6.create table works_on(
+essn char(9),
+pno int,
+hours decimal(4,1),
+primary key(essn,pno),
+foreign key(essn)references employee(ssn),
+foreign key(pno)references project(pnumber));
+
+
+1. insert into employee values
+('John','B','Smith','12345678','1995-01-04','Houston','M',30000.00,'45678321',5);
+('Mariya','C','Moya','12345555','1998-07-05','31 California Houston','F',40000.00,'12345678',6);
+('Ritvik','D','Rajput','45678321','1990-09-06','70 Ottawa Houston','M',50000.00,'123456789',7);
+('Shivanya','E','Sharma','67812345','2001-07-03','Stafford','F',60000.00,'12345555',8);
+('Ankur','F','Singh','12341234','2004-08-12','Texas','M',70000.00,'67812345',9);
+
+2.insert into department(dname,dnumber,mgrsn,mgrsatart_date)values
+('research',5,'12345678','2023-01-01');
+('Finance',6,'12345555','2023-01-01');
+('IT',7,'45678321','2023-03-01');
+('Marketing',8,'67812345','2023-04-01');
+('Operations',9,'12341234','2023-05-01');
+
+3.insert into dependent(essn,dependent_name,sex,bdate,relationship)values
+('12345678','Sarah Smith','F','2016-10-20','spouse');
+('12345678','michal smith','m','2016-02-10','child');
+('12345555','emma moya','f','2018-07-15','child');
+('45678321','liam rajput','m','2020-03-30','child');
+('67812345','noah sharma','m','2019-05-25','child');
+
+
+4.insert into dept_location(dnumber,dlocation)values
+(5,'Stafford'),
+(6,'Angeles'),
+(7,'Chicago'),
+(7,'Chicago'),
+(8,'Houston'),
+(9,'Francisco');
+
+5. insert into project(pname,pnumber,plocation,dnum) values
+('Research Project 2',2,'Stafford',5),
+('IT Project 1',3,'Chicago',7),
+('Marketing Project 1',4,'Houston',8),
+('Operations Project 1',5,'San Francisco',9);
+
+6.insert into works_on(essn,pno,hours)values 
+('12345678',1,40.0);
+('12345555', 2, 35.5);
+('45678321', 3, 42.0); 
+('67812345', 4, 38.5);
+('12345234', 5, 37.0);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

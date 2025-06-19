@@ -1,0 +1,208 @@
+1.)BFS
+#include <stdio.h>
+#include <conio.h>
+int a[20][20],q[20],visited[20],
+n,i,j,f=0,r=-1;
+void bfs(int v)
+{for(i=1;i<=n;i++)
+if(a[v][i]&&!visited[i])
+q[++r]=i;
+if(f<=r)
+{visited[q[f]]=1;
+bfs(q[f++]);}}
+void main()
+{int v;
+printf("\n enter the number of vertices");
+scanf("%d",&n);
+for(i=1;i<=n;i++)
+{q[i]=0;
+visited[i]=0;}
+printf("\n enter graph data in
+matrix form:\n");
+for(i=1;i<=n;i++)
+for(j=1;j<=n;j++)
+scanf("%d",&a[i][j]);
+printf("\n enter the starting vertex");
+scanf("%d",&v);
+bfs(v);
+printf("\n the node which are
+reachable are:\n");
+for(i=1;i<=n;i++)
+if(visited[i])
+printf("%d\t",i);
+getch();}
+
+2.) DFS
+#include<stdio.h>
+int res[20]; 
+int s[20]; 
+int j=0;
+void dfs(int u,int n,int cost[10][10])
+{int v;
+s[u]=1;
+for(v=0;v<n;v++)
+{if(cost[u][v]==1  && s[v]==0)
+{dfs(v,n,cost);}
+res[j++]=u;}
+void depth_first_traversal
+(int n,int a[10][10])
+{int i;
+for(i=0;i<n;i++)
+s[i]=0;
+for(i=0;i<n;i++)
+{if(s[i]==0)
+dfs(i,n,a);}}
+void main()
+{int i,j,k,m,n,cost[10][10];
+printf("\nEnter the number of nodes");
+scanf("%d",&n);
+printf("\nEnter the adjacency matrix:");
+for(i=0;i<n;i++)
+for(j=0;j<n;j++)
+scanf("%d",&cost[i][j]);
+depth_first_traversal(n,cost);
+printf("\nThe topological sequence is:\n");
+for(i=n-1;i>=0;i--)
+printf("%d   ",res[i]);}
+
+3.) SORT
+#include <stdio.h>
+#include<time.h>
+#include<stdlib.h>
+int C[20];
+void Merge(int a[ ], int low, 
+int mid, int high)
+{int i, j, k;
+i=low; j=mid+1; k=low;
+while ( i<=mid && j<=high )
+{if( a[i] <= a[j] )
+C[k++] = a[i++] ;
+else
+C[k++]=a[j++] ;}
+while (i<=mid)
+C[k++] = a[i++] ;
+while (j<=high)
+C[k++] = a[j++] ;
+for(k=low; k<=high; k++)
+a[k] = C[k];}
+void MergeSort(int a[], 
+int low, int high)
+{int mid;
+if(low >= high)
+return;
+mid = (low+high)/2 ;
+MergeSort(a, low, mid);
+MergeSort(a, mid+1, high);
+Merge(a, low, mid, high);}
+int main( )
+{int n, a[100],k;
+clock_t st,et;
+double ts;
+printf("\n Enter the number of elements
+to be sorted:");
+scanf("%d", &n);
+srand(time(0));
+printf("\nThe Random Numbers are:\n");
+for(k=1; k<=n; k++)
+{a[k]=rand()% 100;
+printf("%d\t", a[k]);}
+st=clock();
+MergeSort(a, 1, n);
+et=clock();
+ts=(double)(et-st)/CLK_TCK;
+printf("\n\n\n Sorted Numbers are : \n ");
+for(k=1; k<=n; k++)
+{printf("%d\t", a[k]);}
+printf("\nThe time taken is %e",ts);
+return 0;}
+
+
+4.)QUICK SORT FOR N
+#include<stdio.h>
+#include<time.h>
+#include<stdlib.h>
+int partition(int a[], 
+int low, int high)
+{int i, j, key,temp;
+key=a[low];
+i=low; j=high+1;
+while(i<=j)
+{do{
+i++;}
+while(key>=a[i]);
+do{j--;}
+while(key<a[j]);
+if(i<j){   
+temp=a[i];
+a[i]=a[j];
+a[j]=temp;}}
+temp=a[low];
+a[low]=a[j];
+a[j]=temp;
+return j;}
+void  quick_sort(int a[],
+int low,int high)
+{int mid;
+if(low<high){
+mid=partition(a,low,high);
+quick_sort(a,low,mid-1);
+quick_sort(a,mid+1,high);
+}}int main()
+{int n, a[100],k;
+clock_t st,et;
+double ts;
+printf("\n Enter How many Numbers: ");
+scanf("%d", &n);
+srand(time(0));
+printf("\nThe Random Numbers are:\n");
+for(k=0; k<n; k++)
+{a[k]=rand()%100;
+printf("%d\t",a[k]);}
+st=clock();
+quick_sort(a, 0, n-1);
+et=clock();
+ts=(double)(et-st)/CLK_TCK;
+printf("\n\n\nSorted Numbers are: \n ");
+for(k=0; k<n; k++)
+printf("%d\t", a[k]);
+printf("\nThe time taken is %e",ts);}
+
+5.)Horspool’s String Matching Algorithm.
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+void shift_table(char p[],
+int t[])
+{int i,m;
+m=strlen(p);
+for(i=0;i<128;i++)
+t[i]=m;
+for(i=0;i<=m-2;i++)
+{t[p[i]]=m-i-1;}}
+int horspool_pattern_match
+(char p[],char t[])
+{int m,n,i,k,s[256];
+shift_table(p,s);
+m=strlen(p);
+n=strlen(t);
+i=m-1;
+while(i<=n-1)
+{k=0;
+while(k<=m-1 && t[i-k]==p[m-1-k])
+{k=k+1;}
+if(k==m)  return i-m+1;
+i=i+s[t[i]];}
+return -1;}
+void main()
+{char p[50],t[100];
+int pos;
+printf("\nEnter the text string:\n");
+scanf("%s",t);
+printf("\nEnter the pattern string:\n");
+scanf("%s",p);
+pos=horspool_pattern_match(p,t);
+if(pos==-1){
+printf("\nPattern string not found\n");
+exit(0);}
+printf("\nPattern string found at 
+position %d\n",pos+1);}

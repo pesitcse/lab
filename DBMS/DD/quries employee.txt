@@ -1,0 +1,8 @@
+1. select e.Fname,e.Lname ,e.address from employee e  join department d on dnumber=e.dno where d.dname='Research';
+2. select p.pnumber,p.dnum,e.Lname,e.address,e.bdate from project p,department d, employee e where p.plocation='Stafford' and p.dnum=d.dnumber and d.mgrssn=e.ssn;
+3. select e.Fname,e.Lname,s.Fname as sup_Fname,s.Lname as sup_lname from employee e left join employee s on e.superssn=s.ssn;
+
+4. select distinct p.pnumber from project p join works_on w on p.pnumber=w.pno join employee e on w.essn=e.ssn where e.Lname='Smith';
+
+5. select Fname,minit,Lname from employee where address like '%Houston%' or address like '%Texas';
+6. select * from employee where dno=5 and salary>=30000 and salary<=40000;

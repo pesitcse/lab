@@ -1,0 +1,5 @@
+select d.customer_name from ACCOUNT a, DEPOSITOR d, BRANCH b where b.branch_name=a.branch_name and a.accno=d.accno and b.branch_city='Bangalore' group by customer_name having count(distinct b.branch_name)=(select count(branch_name) from BRANCH where branch_city='Bangalore');
+
+ select distinct (customer_name), count(*) from ACCOUNT a, DEPOSITOR d where a.accno=d.accno and d.accno in (select accno from ACCOUNT where branch_name='Jayanagar') group by d.customer_name having count(*)>=2;
+
+ delete from ACCOUNT where branch_name in (select branch_name from BRANCH where branch_city='delhi');

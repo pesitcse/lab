@@ -1,0 +1,151 @@
+CREATE TABLE BRANCH (
+    BRANCH_NAME VARCHAR(25),
+    BRANCH_CITY VARCHAR(25),
+    ASSETS INT,
+    PRIMARY KEY(BRANCH_NAME)
+);
+
+CREATE TABLE ACCOUNT(
+    ACCNO INT,
+    B_NAME VARCHAR(25),
+    BALANCE INT,
+    PRIMARY KEY(ACCNO),
+    FOREIGN KEY(B_NAME) REFERENCES BRANCH(BRANCH_NAME)
+);
+
+CREATE TABLE CUSTOMER(
+    CUSTOMER_NAME VARCHAR(25),
+    CUSTOMER_STREET VARCHAR(25),
+    CUSTOMER_CITY VARCHAR(25),
+    PRIMARY KEY(CUSTOMER_NAME)
+);
+
+CREATE TABLE DEPOSITOR(
+    CUST_NAME VARCHAR(25),
+    ACC INT,
+    PRIMARY KEY(CUST_NAME, ACC),
+    FOREIGN KEY(CUST_NAME) REFERENCES CUSTOMER(CUSTOMER_NAME),
+    FOREIGN KEY(ACC) REFERENCES ACCOUNT(ACCNO) ON DELETE CASCADE
+);
+
+CREATE TABLE LOAN(
+    LOAN_NUMBER INT,
+    B_NAME VARCHAR(25),
+    AMOUNT INT,
+    PRIMARY KEY(LOAN_NUMBER),
+    FOREIGN KEY(B_NAME) REFERENCES BRANCH(BRANCH_NAME)
+);
+
+CREATE TABLE BORROWER (
+     CUST_NAME VARCHAR(25) NOT NULL,
+     L_NUMBER INT NOT NULL,
+     PRIMARY KEY(CUST_NAME, L_NUMBER),
+     FOREIGN KEY(CUST_NAME) REFERENCES CUSTOMER(CUSTOMER_NAME),
+     FOREIGN KEY(L_NUMBER) REFERENCES LOAN(LOAN_NUMBER)
+);
+
+-- Insert branches
+INSERT INTO BRANCH VALUES 
+('Jaynagar', 'Bangalore', 15000000),
+('Basavanagudi', 'Bangalore', 25000000),
+('Noida', 'Delhi', 50000000),
+('Marine Drive', 'Mumbai', 40000000),
+('Green Park', 'Delhi', 30000000);
+
+-- Insert accounts
+INSERT INTO ACCOUNT VALUES 
+(123, 'Jaynagar', 25000),
+(156, 'Jaynagar', 30000),
+(456, 'Basavanagudi', 15000),
+(789, 'Noida', 25000),
+(478, 'Marine Drive', 48000),
+(778, 'Green Park', 60000),
+(189, 'Basavanagudi', 50000);
+
+-- Insert customers
+INSERT INTO CUSTOMER VALUES 
+('Ramu', 'Jaynagar', 'Bangalore'),
+('Kumar', 'Basavanagudi', 'Bangalore'),
+('John', 'Noida', 'Delhi'),
+('Mike', 'Marine Drive', 'Mumbai'),
+('Sachin', 'Green Park', 'Delhi');
+
+-- Insert depositors (corrected accno values to INT)
+INSERT INTO DEPOSITOR VALUES 
+('Ramu', 123),
+('Ramu', 156),
+('Ramu', 189),
+('Kumar', 456),
+('John', 789),
+('Mike', 478),
+('Sachin', 778);
+
+-- Insert LOAN
+INSERT INTO LOAN VALUES 
+(1111, 'Jaynagar', 250000),
+(2222, 'Basavanagudi', 350000),
+(3333, 'Noida', 150000),
+(4444, 'Marine Drive', 1500000),
+(5555, 'Green Park', 7500000);
+
+
+-- Insert Borrowers
+INSERT INTO BORROWER VALUES
+("Ramu", 1111),
+("Kumar", 2222),
+("John", 3333),
+("Mike", 4444),
+("Sachin", 5555);
+
+queries:-
+
+1.)Find all the customers who have atleast two accounts at the Main branch.
+
+
+SELECT DISTINCT(CUST_NAME), COUNT(*)
+FROM ACCOUNT A, DEPOSITOR D
+WHERE A.ACCNO = D.ACC
+  AND D.ACC IN (
+    SELECT ACCNO
+    FROM ACCOUNT
+    WHERE B_NAME = 'JAYNAGAR'
+  )
+GROUP BY D.CUST_NAME
+HAVING COUNT(*) >= 2;
+
+2.)Find all the customers who have an account at all the branches located in a
+specific city.
+
+SELECT D.CUST_NAME
+FROM ACCOUNT A, DEPOSITOR D, BRANCH B
+WHERE B.BRANCH_NAME = A.B_NAME
+  AND A.ACCNO = D.ACC
+  AND B.BRANCH_CITY = 'BANGALORE'
+GROUP BY D.CUST_NAME
+HAVING COUNT(DISTINCT B.BRANCH_NAME) = (
+    SELECT COUNT(BRANCH_NAME)
+    FROM BRANCH
+    WHERE BRANCH_CITY = 'BANGALORE'
+);
+
+
+
+3.)Demonstrate how you delete all account tuples at every branch located in a  specific city.
+
+
+DELETE FROM ACCOUNT
+WHERE B_NAME IN (
+    SELECT BRANCH_NAME
+    FROM BRANCH
+    WHERE BRANCH_CITY = 'DELHI'
+);
+
+
+
+
+
+
+
+
+
+

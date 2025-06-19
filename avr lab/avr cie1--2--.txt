@@ -1,0 +1,262 @@
+1.Write a prog greatest of three numbers.
+ .org 0
+ .equ largest=0x0060
+ ldi r16,-27
+ ldi r17,27
+ ldi r18,-10
+ cp r16,r17
+ brge l1
+ mov r16,r17
+ l1:cp r16,r18
+ brge l2
+ mov r16,r18
+ l2: sts largest,r16
+ here:jmp here
+
+
+2. Write to divide two numbers.
+.org 0
+.equ	result	=0X0300
+.def	dividend =r17
+.def	counter =r19		
+ldi dividend,10
+ldi divisor,2
+ldi counter,0
+clc 
+l1:inc counter
+sub dividend,divisor
+brcc l1
+dec counter
+sts result,counter
+Here:rjmp Here
+
+
+3. Write check whether the given no is power of 2 or not.
+.org 0
+ldi r16,128	
+ldi r19,0
+ldi r17,0x08	 clc
+top: lsr r16	
+brcc l1
+inc r19
+l1:  dec r17
+brne top 
+here:rjmp here
+
+
+4.)program to find factorial of a number.
+.org 0
+ldi r18,high(ramend)
+out sph,r18
+ldi r18,low(ramend)
+out spl,r18
+ldi r19,0x05
+ldi r18,0x01
+call fact
+ldi r16,0xff
+out ddra,r16
+out porta,r18 
+here: rjmp here		 		 
+fact:nop
+loop:mul r18,r19
+mov r18,r0
+dec r19
+brne loop
+ret	
+
+5.)Write two 8 bit numbers from PORTA and POTRB. 
+.org 0
+ldi r16,0xff
+out ddra,r16
+out ddrb,r16
+out ddrc,r16
+out ddrd,r16
+ldi r16,0x45
+out porta,r16
+ldi r17,0x20
+out portb,r17
+ldi r20,0x00
+out ddra,r20
+out ddrb,r20
+in r24,pina
+in r25,pinb
+mul r24,r25
+out portc,r0
+out portd,r1
+here:rjmp here
+
+
+6.)Write to monitor the bit 1 of PORTC.
+.org 0
+ldi r16,0XFF
+out ddra,r16
+out ddrb,r16
+out ddrc,r16
+ldi r17,0X20
+out portc,r17
+cbi ddrc,1
+sbis pinc,1
+rjmp over
+ldi r16,'Y'
+out porta,r16
+rjmp here
+over: ldi r16,'N'
+out portb,r16
+here:rjmp here
+
+
+
+7.)Write convert packed BCD to ASCII.
+.equ packedbcd=0x300
+.equ ascii1=0x301
+.equ ascii2=0x302
+ldi r16,high(ramend)
+out sph,r16
+ldi r16,low(ramend)
+out spl,r16
+ldi r20,0x38
+sts packedbcd,r20
+call conversion	 
+here:jmp here     
+Conversion:
+lds r20,packedbcd		
+mov r21,r20
+ldi r22,0x30
+andi r20,0x0f				
+add r20,r22				
+sts ascii1,r20				
+swap r21		
+andi r21,0x0f				
+add r21,r22				
+sts ascii2,r21				
+ret
+
+
+8.)add 10 bytes of data 
+.include "m32def.inc"
+.org 0
+Ldi r16,10
+Sts 0X0300,r16
+Ldi r16,20
+Sts 0X0301,r16
+Ldi r16,30
+Sts 0X0302,r16
+Ldi r16,40
+Sts 0X0303,r16
+Ldi r16,50
+Sts 0X0304,r16
+Ldi r16,60
+Sts 0X0305,r16
+Ldi r16,70
+Sts 0X0306,r16
+Ldi r16,80
+Sts 0X0307,r16
+Ldi r16,90
+Sts 0X0308,r16
+Ldi r16,100
+Sts 0X0309,r16
+Ldi r21,0
+Ldi r22,0
+Lds r20,0X0300
+Add r21,r20
+Lds r20,0x0301
+Add r21,r20
+Lds r20,0x0302
+Add r21,r20
+Lds r20,0x0303
+Add r21,r20
+Lds r20,0x304
+Add r21,r20
+Lds r20,0x0305
+Add r21,r20
+Lds r20,0x0306
+Add r21,r20
+Lds r20,0x0307
+Add r21,r20
+Lds r20,0x0308
+Add r21,r20
+Lds r20,0x0309
+Add r21,r20
+in r19,sreg
+lsr r19		
+brcc Here
+ldi r22,1		
+Here:rjmp Here
+
+
+9.)count no of odd and even numbers among n bytes
+.org 0
+ldi r16,6	
+ldi xl, 0X00	
+ldi xh, 0X06	
+ldi r20,0	
+ldi r21,0	
+ldi r17,2
+st x+,r17
+ldi r17,3
+st x+,r17
+ldi r17,4
+st x+,r17
+ldi r17,7
+st x+,r17
+ldi r17,10
+st x+,r17
+ldi r17,12
+st x+,r17
+ldi xl, 0X00	
+ldi xh, 0X06	
+l1: ld r18,x+
+ror r18		
+brcs l2			
+inc r21			
+rjmp next
+l2: inc r20		
+next: dec r16
+brne l1
+here: rjmp here 
+
+
+10.)blink LED connected to 
+1st pin of PORTC with appropriate delay.
+#define led_pin 8
+void setup() { 
+pinMode(led_pin, OUTPUT);}
+void loop(){
+digitalWrite(led_pin, HIGH); 
+delay(1000); 
+digitalWrite(led_pin, LOW); 
+delay(1000);}
+
+11.)A switch //led should glow.
+#define ledPin 13 
+#define switchPin 7 
+int val=0;
+void setup()
+{pinMode(ledPin, OUTPUT); 
+pinMode(switchPin, INPUT);}
+void loop()
+{val=digitalRead(switchPin);
+if (val == HIGH)
+{digitalWrite(ledPin, LOW); 
+}else{digitalWrite(ledPin, HIGH);}}
+
+
+12.)display the given message on LCD.
+#include <LiquidCrystal.h>
+const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+void setup() {
+lcd.begin(16, 2);
+lcd.print("hello, world!");}
+void loop() {
+lcd.setCursor(0, 1);
+lcd.print(millis() / 1000);}
+
+
+
+
+
+
+
+
+

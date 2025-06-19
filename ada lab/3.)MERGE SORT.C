@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include<time.h>
+#include<stdlib.h>
+
+int C[20];
+void Merge(int a[ ], int low, int mid, int high)
+{
+    int i, j, k;
+    i=low; j=mid+1; k=low;
+    while ( i<=mid && j<=high )
+    {
+        if( a[i] <= a[j] )
+            C[k++] = a[i++] ;
+        else
+            C[k++] = a[j++] ;
+    }
+    while (i<=mid)
+         C[k++] = a[i++] ;
+    while (j<=high)
+         C[k++] = a[j++] ;
+    for(k=low; k<=high; k++)
+        a[k] = C[k];
+}
+
+void MergeSort(int a[], int low, int high)
+{
+    int mid;
+
+    if(low >= high)
+        return;
+    mid = (low+high)/2 ;
+    MergeSort(a, low, mid);
+    MergeSort(a, mid+1, high);
+    Merge(a, low, mid, high);
+}
+
+int main( )
+{
+    int n, a[100],k;
+    clock_t st,et;
+    double ts;
+    printf("\n Enter the number of elements to be sorted:");
+    scanf("%d", &n);
+    srand(time(0));
+    printf("\nThe Random Numbers are:\n");
+    for(k=1; k<=n; k++)
+    {
+        a[k]=rand()% 100;
+        printf("%d\t", a[k]);
+    }
+    st=clock();
+    MergeSort(a, 1, n);
+    et=clock();
+    ts=(double)(et-st)/CLK_TCK;
+    printf("\n\n\n Sorted Numbers are : \n ");
+    for(k=1; k<=n; k++)
+    {
+        printf("%d\t", a[k]);
+    }
+    printf("\nThe time taken is %e",ts);
+    return 0;
+}

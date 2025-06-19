@@ -1,0 +1,95 @@
+8.
+select e.fname,e.lname from employee as e , dependent as  d where e.fname=d.dependent_name and e.sex=d.sex and e.ssn=d.essn;
+9.
+ select e.fname,e.lname
+    -> from employee as e
+    -> where not exists(select *from dependent as d
+    -> where e.ssn=d.essn);
++--------+-------+
+| fname  | lname |
++--------+-------+
+| Ankur  | Singh |
+| Mariya | Moya  |
++--------+-------+
+10.
+select b.fname,b.lname from employee b where(select count(*) from dependent as d  where b.ssn=d.essn)>=1;
++----------+--------+
+| fname    | lname  |
++----------+--------+
+| John     | Smith  |
+| Ritvik   | Rajput |
+| Shivanya | Sharma |
++----------+--------+
+11.
+ select e.ssn from employee as e where e.ssn in (select ssn from project  where pnumber=1 or pnumber=2 or pnumber=3);
++----------+
+| ssn      |
++----------+
+| 12341234 |
+| 12345555 |
+| 12345678 |
+| 45678321 |
+| 67812345 |
++----------+
+12.
+select sum(salary),max(salary),min(salary),avg(salary) from employee,department where dname='Research' and dno=dnumber;
++-------------+-------------+-------------+--------------+
+| sum(salary) | max(salary) | min(salary) | avg(salary)  |
++-------------+-------------+-------------+--------------+
+|    30000.00 |    30000.00 |    30000.00 | 30000.000000 |
++-------------+-------------+-------------+--------------+
+13.
+ select dno ,count(*),avg(salary) from employee group by dno;
++-----+----------+--------------+
+| dno | count(*) | avg(salary)  |
++-----+----------+--------------+
+|   5 |        1 | 30000.000000 |
+|   6 |        1 | 40000.000000 |
+|   7 |        1 | 50000.000000 |
+|   8 |        1 | 60000.000000 |
+|   9 |        1 | 70000.000000 |
++-----+----------+--------------+
+
+
+
+BANK DATABASE
+1.
+ select distinct(customer_name),count(*) from account as a,depositor as  d where a.accno=d.accno and d.accno in(select accno from account where branch_name="jayanagar") group by d.customer_name having count(*)>=2;
++---------------+----------+
+| customer_name | count(*) |
++---------------+----------+
+| ramu          |        2 |
++---------------+----------+
+2
+ select d.customer_name from account as a,depositor as d,branch as b where b.branch_name=a.branch_name and a.accno=d.accno and b.branch_city="bangalore" group by customer_name having count(distinct b.branch_name)=(select count(branch_name) from branch where branch_city="bangalore");
++---------------+
+| customer_name |
++---------------+
+| ramu          |
++---------------+
+3.
+ delete from account where branch_name in(select branch_name from branch where branch_city="Delhi");
+Query OK, 2 rows affected (0.03 sec)
+
+mysql> select * from account;
++-------+--------------+----------+
+| accno | branch_name  | balance  |
++-------+--------------+----------+
+|   123 | jayanagar    | 25000.00 |
+|   156 | jayanagar    | 30000.00 |
+|   189 | basavanagudi | 48888.00 |
+|   456 | basavanagudi | 15000.00 |
+|   478 | marine drive | 48000.00 |
++-------+--------------+----------+
+5 rows in set (0.00 sec)
+
+mysql> select * from depositor;
++---------------+-------+
+| customer_name | accno |
++---------------+-------+
+| ramu          |   123 |
+| ramu          |   156 |
+| ramu          |   189 |
+| kumar         |   456 |
+| mike          |   478 |
++---------------+-------+

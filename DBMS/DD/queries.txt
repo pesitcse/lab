@@ -1,0 +1,229 @@
+
+3 ) 
+i.Retrieve the name and address of all employees who work for the ‘Research’ department.
+select e.fname,e.address from EMPLOYEE e, DEPARTMENT d where d.dname="Research" and d.dnumber = e.dno;
+
+ii. For every project located in ‘Stafford’, list the project number, the controlling department number, and the department manager’s last name, address, and birth date.
+select p.pnumber,p.dnum,e.lname,e.address,e.bdate from PROJECT p, DEPARTMENT d, EMPLOYEE e where p.plocation="Stafford" and p.dnum= d.dnumber and d.mgrssn=e.ssn;
+
+iii. For each employee, retrieve the employee’s first and last name and the first and last name of his or her immediate supervisor.
+select e.fname,e.lname,s.fname,s.lname from employee as e, employee as s where s.superssn=e.ssn;
+
+iv. Make a list of all project numbers for projects that involve an employee whose last name is ‘Smith’, either as a worker or as a manager of the department that controls the project.
+(select distinct pnumber from project,department,employee where dnum=dnumber and mgrssn=ssn and lname="Smith") 
+union 
+(select distinct pnumber from project,works_on,employee where pnumber=pno and essn=ssn and lname="Smith");
+
+v. Retrieve all employees whose address is in Houston, Texas.
+select fname,mname,lname from employee where address="Houston,Texas";
+
+vi. Retrieve all employees in department 5 whose salary is between $30,000 and $40,000.
+
+select * from employee where dno=5 and salary >=30000 and salary <=40000;
+
+
+4a. Retrieve the names of all employees who do not have supervisors.
+
+         select Fname, Minit, Lname 
+    from EMPLOYEE e 
+    where 
+    not exists(select * from EMPLOYEE as s where e.Super_ssn=s.Ssn);
+
++-------+-------+-------+
+| Fname | Minit | Lname |
++-------+-------+-------+
+| John  | B     | Smith |
+| James | E     | Borg  |
++-------+-------+-------+
+2 rows in set (0.00 sec)
+
+
+
+4b. Retrieve the name of each employee who has a dependent with the same first name and is 
+     the same gender as the employee
+    select Fname, Minit, Lname 
+    from EMPLOYEE e, DEPENDENT d where
+    e.Fname=d.Dependent_name
+    and 
+    e.Sex=d.Sex;
+
++-------+-------+-------+
+| Fname | Minit | Lname |
++-------+-------+-------+
+| John  | B     | Smith |
++-------+-------+-------+
+1 row in set (0.00 sec)
+
+
+
+4c. Retrieve the names of employees who have no dependents.
+
+         select Fname, Minit, Lname 
+    from EMPLOYEE where 
+    not exists(select * from DEPENDENT where Ssn=Essn);
+
++--------+-------+---------+
+| Fname  | Minit | Lname   |
++--------+-------+---------+
+| Joyce  | A     | English |
+| Ramesh | K     | Narayan |
+| James  | E     | Borg    |
+| Ahmad  | V     | Jabbar  |
+| Alicia | J     | Zelaya  |
++--------+-------+---------+
+5 rows in set (0.00 sec)
+
+
+
+4d. List the names of managers who have at least one dependent.
+
+         select Fname, Minit, Lname 
+    from EMPLOYEE where 
+    exists(select * from DEPARTMENT where Ssn=Mgr_ssn and Dno=Dnumber)
+    and
+    exists(select * from DEPENDENT where Ssn=Essn);
+
+
++----------+-------+---------+
+| Fname    | Minit | Lname   |
++----------+-------+---------+
+| Franklin | T     | Wong    |
+| Jennifer | S     | Wallace |
++----------+-------+---------+
+2 rows in set (0.00 sec)
+
+
+
+4e. Retrieve the Social Security numbers of all employees who work on project numbers 1, 2,  
+     or 3.
+
+         select distinct Essn from WORKS_ON where Pno in (1,2,3);
+
++-----------+
+| Essn      |
++-----------+
+| 123456789 |
+| 453453453 |
+| 333445555 |
+| 666884444 |
++-----------+
+4 rows in set (0.00 sec)
+
+
+
+
+4f. Find the sum of the salaries of all employees of the ‘Research’ department, as well as the 
+     maximum salary, the minimum salary, and the average salary in this department.
+    select sum(Salary), max(Salary), min(Salary), avg(salary)
+    from EMPLOYEE, DEPARTMENT 
+    where Dno=Dnumber and Dname="Research";
+
++-------------+-------------+-------------+-------------+
+| sum(Salary) | max(Salary) | min(Salary) | avg(salary) |
++-------------+-------------+-------------+-------------+
+|      133000 |       40000 |       25000 |  33250.0000 |
++-------------+-------------+-------------+-------------+
+1 row in set (0.00 sec)
+
+
+
+
+4g. For each department, retrieve the department number, the number of employees in the 
+     department, and their average salary.
+
+         select Dno, count(*), avg(Salary)
+    from EMPLOYEE 
+    group by Dno;
+
+
++-----+----------+-------------+
+| Dno | count(*) | avg(Salary) |
++-----+----------+-------------+
+|   1 |        1 |  55000.0000 |
+|   4 |        3 |  31000.0000 |
+|   5 |        4 |  33250.0000 |
++-----+----------+-------------+
+3 rows in set (0.00 sec)
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+1. Find all the customers who have atleast two accounts at the Main branch. 
+
+SQL> select distinct(customer_name), count(*) 
+from account a, depositor d 
+where a.accno=d.accno 
+and d.accno in (select accno from account 
+where branch_name=’jaynagar’) 
+group by d.customer_name 
+having count(*)>=2;
+
+RESULT 
+
+CUSTOMER_NAME               COUNT(*) 
+------------------------------------------------------ 
+ramu                                                 
+
+
+
+
+
+2. Find all the customers who have an account at all the branches located in a specific city. 
+
+SQL> select d.customer_name 
+from account a, depositor d, branch b 
+where b.branch_name=a.branch_name and a.accno=d.accno 
+and b.branch_city=’bangalore’ 
+having count(distinct b.branch_name)=(select count(branch_name) 
+from branch 
+where branch_city=’bangalore’) 
+group by customer_name; 
+
+RESULT 
+
+CUSTOMER_NAME 
+------------------------- 
+ramu 
+
+
+
+
+3. Demonstrate how you delete all account tuples at every branch located in a specific city. 
+
+SQL> delete from account 
+where branch_name in (select branch_name 
+from branch 
+where branch_city='delhi'); 
+
+2 rows deleted. RESULT 
+
+SQL> select *from account; 
+
+
+ACCNO               BRANCH_NAME             BALANCE 
+----------------------------------------------------------------------- 
+123                           jaynagar                              25000 
+156                           jaynagar                              30000 
+456                       basavanagudi                          15000 
+478                       marine drive                           48000 
+189                       basavanagudi                          48888 
+
+SQL> select *from depositor; 
+
+CUSTOMER_NAME             ACCNO 
+------------------------------------------------ 
+ramu                                            123 
+ramu                                            156 
+ramu                                            189 
+kumar                                          456 
+mike                                            478 
+
