@@ -1,0 +1,59 @@
+4.) program to find factorial of a number.
+.org 0 
+ldi r18,high(ramend) 
+out sph,r18 
+ldi r18,low(ramend) 
+out spl,r18 
+ldi r19,0x05 
+ldi r18,0x01 
+call fact 
+ldi r16,0xff 
+out ddra,r16 
+out porta,r18  
+here: rjmp here     
+fact:    nop 
+loop:    mul r18,r19 
+mov r18,r0 
+dec r19 
+brne loop 
+ret 
+
+O/P:-
+5 ️⃣ Run to the point of interest
+Quickest path
+Set a breakpoint on out PORTA, r18 (click the left gutter).
+Press F5.
+Execution stops right before the port write.
+
+Single-step path
+Keep hitting F10 until the yellow arrow reaches out PORTA, r18.
+
+6 ️⃣ Look at the result
+Window	Menu path	What you’ll see
+Registers	Debug ▸ Windows ▸ Registers	R18 = 0x78 (120 dec)
+I/O View	Debug ▸ Windows ▸ I/O	Expand PORTA: Data = 0x78
+Memory (optional)	Debug ▸ Windows ▸ Memory ▸ Memory1 → type &PORTA	Byte reads 78
+Watch	Alt + F9, W then add R18	Live R18 updates while stepping
+
+(If the I/O window shows hex but you prefer decimal: right-click → Format ▸ Unsigned Decimal.)
+
+7 ️⃣ Why the answer is 0x78
+scss
+Copy
+Edit
+Product   n
+ 1        5   (init)
+ 5        4
+20       3
+60       2
+120      1  ← loop exits (r19 decrements to 0)
+120 decimal = 0x78 hex, fits in one byte, so mul’s low byte (R0) is all you need.
+
+(Factorials of 6 or more overflow 8 bits; you'd need 16-bit math then.)
+
+Common pitfalls & fixes
+Symptom	Likely cause	Fix
+Simulator crashes at call	SP not initialised	Keep the SP setup lines
+R18 shows 00	Broke before call fact finished	Step/run until after the subroutine
+PORTA still FF	Forgot to set DDRA first	Leave ldi r16,0xFF / out DDRA,r16 in place
+Need to test on real MCU	Connect your ISP/UPDI tool and change the Tool back to it, then Build → Program	

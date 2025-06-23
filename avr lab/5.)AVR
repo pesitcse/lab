@@ -1,0 +1,81 @@
+5.)Write ALP program to accept two 8 bit numbers from PORTA and POTRB. 
+Multiply two numbers and send the result to PORTC (lower byte) and PORTD (higher byte).
+
+.org 0 
+ldi r16,0xff 
+out ddra,r16 
+out ddrb,r16 
+out ddrc,r16 
+out ddrd,r16 
+ldi r16,0x45 
+out porta,r16 
+ldi r17,0x20 
+out portb,r17 
+ldi r20,0x00 
+out ddra,r20 
+out ddrb,r20 
+in r24,pina 
+in r25,pinb 
+mul r24,r25 
+out portc,r0 
+out portd,r1 
+here:rjmp here
+
+
+O/P:-
+5 Drive the input pins (PINA / PINB)
+Because DDRA/DDR B were cleared, pins A & B are inputs: you must tell the simulator what external logic levels they “see”.
+
+Open the I/O window
+Debug ▸ Windows ▸ I/O → expand PORTA and PORTB.
+
+Set the pin values
+In the “PIN” column type the operand bytes:
+
+Register	Value	Meaning
+PINA	0x45	0100 0101₂ (69)
+PINB	0x20	0010 0000₂ (32)
+
+Click the value field (or right-click ▸ Set Value).
+In older Studio versions the edit is in hex by default.
+
+6 Run to the port-output lines
+Fast way:
+
+Set a breakpoint on out PORTC, r0 (click left gutter).
+
+Press F5. The simulator stops just before the write.
+
+Single-step way: keep hitting F10 until the yellow arrow reaches the out instructions.
+
+7 See the multiplication result
+Window	Open via	What you’ll read
+Registers	Debug ▸ Windows ▸ Registers	R0 = 0xA0, R1 = 0x08
+I/O → PORTC	Already open	Data = 0xA0
+I/O → PORTD	Already open	Data = 0x08
+Watch (optional)	Alt + F9, W then add R0, R1	Live view
+
+Interpretation:
+0x45 × 0x20 = 0x08A0 (2224 decimal)
+• Low byte = A0 → goes to PORTC
+• High byte = 08 → goes to PORTD
+
+If you prefer decimal, right-click the I/O value → Format ▸ Unsigned Decimal.
+
+8 Common hiccups & quick fixes
+Symptom	Cause	Fix
+PORTC/PORTD stay 00	Forgot to edit PINA / PINB	Enter the hex values in the I/O window before you hit the mul
+Pins don’t accept edits	DDRA/DDR B not cleared	Make sure the two out DDRx, 0x00 lines are present before in r24,pina / in r25,pinb
+Simulator starts at address 0	Missing rjmp reset	Keep the .cseg / reset vector lines
+
+Want to test different numbers?
+Just change the PINA and PINB “PIN” fields in the I/O window, then:
+
+Press Ctrl + Shift + F5 (Restart debug session)
+
+F5 to run to the breakpoint again
+
+The new product appears instantly on PORTC/D.
+
+
+

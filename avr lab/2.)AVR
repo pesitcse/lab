@@ -1,0 +1,69 @@
+
+2.) Write ALP program to divide two numbers.
+.org 0 
+.equ result =0X0300
+.def dividend =r17 
+.def divisor =r18
+.def counter =r19  
+ldi dividend,10 
+ldi divisor,2 
+ldi counter,0 
+clc  
+l1:inc counter 
+sub dividend,divisor 
+brcc l1 
+dec counter 
+sts result,counter 
+Here: rjmp Here 
+
+
+
+O/P:-
+5. Run to the sts result, r19 instruction
+Option A – Step over each instruction
+
+Press F10 a dozen times until the yellow arrow sits on rjmp here.
+
+Option B – Set a breakpoint & run
+
+Click the left gutter next to sts result, r19 (red dot appears).
+
+Press F5. The simulator stops on that line, right before the store.
+
+6. Inspect the quotient
+(a) Registers window
+Debug ▸ Windows ▸ Registers
+Look at R19 – it shows 0x05 (decimal 5).
+
+(b) Memory window
+Debug ▸ Windows ▸ Memory ▸ Memory1
+
+In the address box type 0x0300.
+
+You will see 05 (hex) sitting there – the quotient you stored.
+
+(Right-click ▸ Format ▸ Signed Decimal if you prefer to see “5”.)
+
+(c) Watch window (optional)
+Open Watch1 (Alt + F9, W) and add
+
+c
+Copy
+Edit
+*(uint8_t*)0x0300
+The value updates live as you single-step.
+
+7. Verify the algorithm quickly
+Initial dividend = 10, divisor = 2
+
+The loop subtracts 2 until the carry flag sets: 10→8→6→4→2→0→-2.
+That’s 6 iterations, so we dec r19 once → final quotient = 5.
+
+Exactly what you now see in R19 and at 0x0300.
+
+Common hiccups & fixes
+Symptom	Cause	Fix
+Simulator starts at a weird address	Missing rjmp reset / .cseg	Use the template above
+Memory window shows “??”	Wrong address or not yet executed	Step/run until after sts
+R19 is 6, not 5	Forgot the dec r19	Make sure that line is present
+

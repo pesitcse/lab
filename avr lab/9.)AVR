@@ -1,0 +1,69 @@
+9.)Write ALP program to count number of odd and even numbers among n bytes of 
+data stored starting from $600 (Use indirect addressing mode).
+
+.org 0 
+ldi r16,6 
+ldi xl, 0X00 
+ldi xh, 0X06
+ldi r20,0 
+ldi r21,0 
+ldi r17,2 
+st x+,r17 
+ldi r17,3 
+st x+,r17 
+ldi r17,4 
+st x+,r17 
+ldi r17,7 
+st x+,r17 
+ldi r17,10 
+st x+,r17 
+ldi r17,12 
+st x+,r17 
+ldi xl, 0X00 
+ldi xh, 0X06 
+l1: ld r18,x+ 
+ror r18  
+brcs l2   
+inc r21  
+rjmp next 
+l2: inc r20  
+next: dec r16 
+brne l1 
+here: rjmp here  
+
+
+O/P:-
+4 Inspect the two counters
+Window	Menu path	What to look at
+Registers	Debug ▸ Windows ▸ Registers	R20 = 0x02, R21 = 0x04
+Memory1 (if you kept the optional sts)	Debug ▸ Windows ▸ Memory ▸ Memory1 → type 0x0600	Bytes 02 and 04 appear right after the table
+
+Tip: right-click inside either window → Format ▸ Unsigned Decimal (or ASCII) if you prefer decimal read-outs.
+
+5 Why it works
+ror r18 shifts the byte right one bit; the original LSB appears in the C flag.
+
+LSB = 1 → odd → branch to odd: (increment R20).
+
+LSB = 0 → even → fall through and increment R21.
+
+After six iterations the loop exits; the idle loop leaves the results unchanged so you can read them at leisure.
+
+Common hiccups
+Issue	Quick fix
+Simulator starts at 0x0000 instead of your code	Keep the .cseg section and rjmp reset.
+R20/R21 still 0	You paused too early → let the code run to here: or step past brne l1.
+Memory shows “??”	Open/refresh the Memory window after the optional sts execute.
+
+That’s all — build, run, and peek at R20 and R21 (or the Memory bytes) to verify the even/odd counts. Happy debugging!
+
+
+
+
+
+
+
+
+
+
+

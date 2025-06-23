@@ -1,0 +1,76 @@
+6.) Write ALP program to monitor the bit 1 of PORTC. If set send ‘Y’ to PORTA else 
+send ‘N’ to PORTB. 
+.org 0 
+ ldi r16,0XFF 
+ out ddra,r16 
+ out ddrb,r16 
+ out ddrc,r16 
+ ldi r17,0X20 
+ out portc,r17 
+ cbi ddrc,1 
+sbis pinc,1 
+ rjmp over 
+ ldi r16,'Y' 
+ out porta,r16 
+ rjmp here 
+ over: ldi r16,'N' 
+ out portb,r16 
+here:  rjmp here
+
+
+O/P:-
+
+
+5 Drive pin PC1 in the I/O window
+Open the I/O window
+Debug ▸ Windows ▸ I/O → expand PORTC.
+
+Edit the “PIN” value (double-click the value column or right-click ▸ Set Value).
+
+Set PC1 = 1 (write 0x02) if you want the “Y” path.
+
+Set PC1 = 0 (write 0x00) if you want the “N” path.
+
+Only bit 1 matters; other bits may stay 0.
+
+6 Run to the decision point
+Fast way – set a breakpoint on ldi r16,'Y' (or on over:) and press F5.
+The simulator stops on whichever branch is taken.
+
+Single-step way – keep pressing F10 until you reach out PORTA,r16 or out PORTB,r16.
+
+7 Watch the result
+Window	Path	What you’ll see
+Registers	Debug ▸ Windows ▸ Registers	R16 = 0x59 (“Y”) or 0x4E (“N”)
+I/O → PORTA	already open	Data = 0x59 if “Y” branch
+I/O → PORTB	already open	Data = 0x4E if “N” branch
+Watch (optional)	Alt + F9, W; add PORTA or PORTB	live view
+
+(Right-click a Data field → Format ▸ ASCII to see the letter instead of hex.)
+
+What just happened?
+All pins start as outputs (DDRx = 0xFF).
+
+cbi DDRC,1 turns PC1 into an input, leaving the other PC pins as outputs.
+
+SBIS PINC,1 examines that input once:
+
+PC1 = 1 → skip the rjmp over → drop into “Y” path → PORTA = 'Y'.
+
+PC1 = 0 → execute rjmp over → drop into “N” path → PORTB = 'N'.
+
+The endless loop keeps the result stable so you can read it.
+
+To test the other branch, just:
+
+Change the PINC value (toggle bit 1).
+
+Press Ctrl + Shift + F5 to restart debugging.
+
+F5 to run again.
+
+Common hiccups
+Symptom	Cause	Fix
+Can’t edit PINC	PC1 is still configured as an output	Make sure the cbi DDRC,1 line executes before you edit PINC.
+Both PORTA & PORTB stay 0x00	Didn’t run past the branch	Put a breakpoint after each out or keep stepping.
+Wrong port shows a value	Remember: “Y” → PORTA, “N” → PORTB.	

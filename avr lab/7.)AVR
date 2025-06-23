@@ -1,0 +1,60 @@
+7.)Write ALP program to convert packed BCD to ASCII.
+.equ packedbcd=0x300 
+.equ ascii1=0x301 
+.equ ascii2=0x302 
+ldi r16,high(ramend) 
+out sph,r16 
+ldi r16,low(ramend) 
+out spl,r16 
+ldi r20,0x38 
+sts packedbcd,r20 
+call conversion
+here:jmp here      
+Conversion: 
+lds r20,packedbcd 
+mov r21,r20 
+ldi r22,0x30 
+andi r20,0x0f  
+add r20,r22  
+sts ascii1,r20  
+swap r21   
+andi r21,0x0f  
+add r21,r22  
+sts ascii2,r21  
+ret
+
+
+O/P:-
+5 Run to the end of conversion
+Quick way: set a breakpoint on sts ascii2, r21 (click the left gutter) and press F5.
+
+Step way: keep tapping F10 until the yellow arrow passes the sts instruction.
+
+After that, the program loops forever at here: so memory is stable.
+
+6 Inspect the result
+Window	Menu path	What to type / look at	What you’ll see
+Memory1	Debug ▸ Windows ▸ Memory ▸ Memory1	Enter address 0x0300	• 0x38 at 0300 (packed BCD)
+• 0x38 at 0301 (‘8’)
+• 0x33 at 0302 (‘3’)
+Registers	Debug ▸ Windows ▸ Registers	R20/R21 after subroutine	R20 = 0x38, R21 = 0x33
+Watch (optional)	Alt + F9, W	Add *(uint8_t*)0x0301, *(uint8_t*)0x0302	Live values while stepping
+
+Tip: Right-click inside Memory1 → Format ▸ ASCII to see the characters instead of hex.
+
+What happened?
+Test byte 0x38 (BCD “3 8”) stored at 0x0300.
+
+Subroutine splits it:
+
+Low nibble 0x8 → ASCII 0x38 (‘8’) → 0x0301
+
+High nibble 0x3 → ASCII 0x33 (‘3’) → 0x0302
+
+The idle loop lets you examine memory indefinitely.
+
+Common hiccups & fixes
+Symptom	Likely cause	Quick fix
+Memory window shows ??	You didn’t run past the sts lines	Press F5 or step until after conversion writes
+Simulator starts at address 0	Missing rjmp reset / .cseg	Keep the reset vector section
+Stack-related crashes (rare here)	SP not set	Leave the two out SPH/SPL lines

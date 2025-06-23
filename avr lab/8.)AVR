@@ -1,0 +1,78 @@
+8.)Write ALP program to add 10 bytes of data stored starting from $300. Store the sum 
+in R21 and carry in R22. (Use direct addressing mode). 
+.include "m32def.inc" 
+.org 0 
+Ldi r16,10 
+Sts 0X0300,r16 
+Ldi r16,20 
+Sts 0X0301,r16 
+Ldi r16,30 
+Sts 0X0302,r16 
+Ldi r16,40 
+Sts 0X0303,r16 
+Ldi r16,50 
+Sts 0X0304,r16 
+Ldi r16,60 
+Sts 0X0305,r16 
+Ldi r16,70 
+Sts 0X0306,r16 
+Ldi r16,80 
+Sts 0X0307,r16 
+Ldi r16,90 
+Sts 0X0308,r16 
+Ldi r16,100 
+Sts 0X0309,r16 
+Ldi r21,0 
+Ldi r22,0 
+Lds r20,0X0300 
+Add r21,r20 
+Lds r20,0x0301 
+Add r21,r20 
+Lds r20,0x0302 
+Add r21,r20 
+Lds r20,0x0303 
+Add r21,r20 
+Lds r20,0x304 
+Add r21,r20 
+Lds r20,0x0305 
+Add r21,r20 
+Lds r20,0x0306  
+Add r21,r20 
+Lds r20,0x0307 
+Add r21,r20 
+Lds r20,0x0308 
+Add r21,r20 
+Lds r20,0x0309 
+Add r21,r20 
+in r19,sreg 
+lsr r19  
+brcc Here 
+ldi r22,1  
+Here:rjmp Here 
+
+
+O/P:-
+5 Open the result windows
+Window	Menu path	What you will see
+Registers	Debug ▸ Windows ▸ Registers	R21 = 0x26 (38) and R22 = 0x01
+IO → SREG	Debug ▸ Windows ▸ I/O	Bit0 (C) is 1 (carry occurred)
+Memory1 (optional)	Debug ▸ Windows ▸ Memory ▸ Memory1 → type 0x0300	The ten input bytes (10…100) + any extra result bytes you decided to store
+
+If you prefer decimal, right-click a value cell ➜ Format ▸ Unsigned Decimal.
+
+6 Why does it work?
+Ten numbers 10 + 20 + … + 100 = 550
+
+550 − 512 = 38 → low byte = 38 (0x26)
+
+One rollover past 255 → carry flag set exactly once → R22 = 1
+
+7 Troubleshooting
+Symptom	Likely cause	Fix
+Simulator starts at word 0	Forgot rjmp reset / .cseg	Keep the template sections
+R22 stays 0	Didn’t run to the end, or removed the carry-copy code	Step/Run past the brcc test
+Values in Memory1 are ??	You opened the window before they were written	Close & reopen, or press Refresh icon
+
+That’s all there is to it—build, simulate, open the Registers window, and you can read the 8-bit sum in R21 and the overflow byte in R22. Happy debugging!
+
+

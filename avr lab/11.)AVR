@@ -1,0 +1,96 @@
+ 11. A switch is connected to PORTA. If it is pressed the led should glow. Write C program 
+to perform the above said operation. 
+
+#define ledPin 13 
+#define switchPin 7
+  
+int val = 0;  
+void setup() 
+{ 
+  pinMode(ledPin, OUTPUT); 
+  pinMode(switchPin, INPUT); 
+} 
+void loop() 
+{ 
+  val = digitalRead(switchPin);
+  if (val == HIGH) 
+  {
+    digitalWrite(ledPin, LOW);  
+  } else { 
+    digitalWrite(ledPin, HIGH);
+  } 
+}
+
+
+O/P:-
+Step 3: Wire the pushbutton
+Click “+ Add Part” → choose Pushbutton
+
+Wire as follows:
+
+One side of the button → pin 7 (digital input)
+
+Same side → 10kΩ pull-down resistor to GND
+
+Other side of button → VCC (5V)
+
+This makes sure:
+
+When the button is pressed, pin 7 reads HIGH
+
+When not pressed, the resistor pulls it to LOW
+
+Circuit summary:
+
+less
+Copy
+Edit
+ [5V] --- [button] --- pin 7
+           |
+         [10kΩ]
+           |
+         [GND]
+Step 4: Run and Test
+Click ▶ Run
+
+Click the button to "press" it virtually
+
+Watch the on-board LED (pin 13) on the Arduino UNO:
+
+Pressed → LED OFF
+
+Not pressed → LED ON
+
+(You can also add an external LED to pin 13 if you want to see it visually.)
+
+🧠 Bonus: Use INPUT_PULLUP (optional improvement)
+To avoid using an external resistor, you can let the Arduino pull the pin high by default, and wire the button to ground.
+
+Updated code:
+
+cpp
+Copy
+Edit
+#define ledPin 13 
+#define switchPin 7
+
+void setup() 
+{ 
+  pinMode(ledPin, OUTPUT); 
+  pinMode(switchPin, INPUT_PULLUP); 
+} 
+void loop() 
+{ 
+  if (digitalRead(switchPin) == LOW) // Pressed
+    digitalWrite(ledPin, HIGH);
+  else
+    digitalWrite(ledPin, LOW);
+}
+Wiring:
+
+One button side to pin 7
+
+Other button side to GND
+
+No resistor needed!
+

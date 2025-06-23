@@ -1,0 +1,42 @@
+10.) Write C program to blink LED connected to 1st pin of PORTC with appropriate delay.
+
+#define led_pin 8 
+void setup() {  
+pinMode(led_pin, OUTPUT); 
+} 
+void loop() { 
+digitalWrite(led_pin, HIGH);
+delay(1000);
+digitalWrite(led_pin, LOW);
+delay(1000);
+}
+
+
+0/P:-
+3 Add an LED on pin 8 (only needed if you keep led_pin 8)
+Click ADD PART (left toolbar), choose LED and Resistor (220 Ω).
+
+Drag the LED so its anode (label A) sits on digital pin 8 of the UNO, and its cathode (label C) on one end of the resistor.
+
+Connect the other end of the resistor to GND.
+The wiring is the same as on a breadboard – Wokwi auto-colors the lines so it’s easy to see.
+
+Press Save.
+
+(Wokwi’s visual editor writes the diagram.json for you; no hand-editing required.)
+instructables.com
+
+4 Run the simulation
+Click the green ► Run button.
+
+If you used pin 13: the little “L” LED on the UNO board blinks.
+
+If you wired an external LED to pin 8: that LED will fade from black (OFF) to bright red (ON) every second.
+
+You can pause/rewind the simulation at any time, or open “Logic Analyzer” (top-right “+” menu) and hook channel 0 to D8 to see a perfect 1 s square-wave.
+
+5 Troubleshooting tips
+Symptom	Quick check
+LED always dark	Is the resistor really tied to GND? Is led_pin the same number the LED is connected to?
+Compiler error says “unknown board”	Make sure the project template is Arduino UNO (or change the board in the dropdown next to Run).
+LED blinks too fast/slow	You changed the delay() values or simulation speed slider (bottom bar).

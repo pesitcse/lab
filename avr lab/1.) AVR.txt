@@ -1,0 +1,52 @@
+1.)Write a program to find greatest of three numbers.
+.org 0 
+.equ largest=0x0060 
+ldi r16,-27 
+ldi r17,27 
+ldi r18,-10 
+cp r16,r17 
+brge l1 
+mov r16,r17 
+l1:   cp r16,r18 
+brge l2 
+mov r16,r18 
+l2:   sts largest,r16 
+here:   jmp here
+
+
+
+
+o/p:-
+Debug ▸ Windows ▸ Registers
+
+Look at R16 – after the logic finishes it should be 0x1B (decimal 27).
+
+(b) Memory window
+Debug ▸ Windows ▸ Memory ▸ Memory1
+
+In the address box type 0x0060 (or whatever address you used).
+
+The byte there will read 1B – that’s 27, the largest of the three inputs.
+
+(Tip: You can right-click in the Memory window and choose Format ▸ Signed Decimal if you want to see “27” instead of hex.)
+
+(c) Watch/QuickWatch
+Open Watch1 (Alt + F9, W) and add *(uint8_t*)0x0060.
+
+The window updates live as you step.
+
+7. (Optional) Prove it on real hardware
+If you have a physical AVR and an ICE / UPDI / ISP:
+
+Change the Tool to your programmer, build → program, then send r16 over UART or light LEDs for a hardware proof. But for simple verification, the simulator already shows you the SRAM and register values.
+
+Why the result is 0x1B
+-27 = 0xE5 (two’s complement)
+
+27 = 0x1B
+
+-10 = 0xF6
+
+The algorithm correctly keeps the greater unsigned & signed value “27”, so R16 (and memory @ largest) ends up as 0x1B.
+
+

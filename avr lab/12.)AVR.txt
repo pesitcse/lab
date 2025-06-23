@@ -1,0 +1,104 @@
+ 12. Write a program to display the given message on LCD.
+
+#include <LiquidCrystal.h> 
+const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2; 
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7); 
+void setup() { 
+lcd.begin(16, 2); 
+lcd.print("hello, world!"); 
+} 
+void loop() { 
+lcd.setCursor(0, 1); 
+lcd.print(millis() / 1000); 
+}
+
+
+
+
+O/P:-
+
+2 Add and wire the LCD1602
+Click “+ Add Part” on the left toolbar → choose “LCD1602” (parallel interface).
+
+Drag the display next to the UNO; then connect:
+
+LCD pin	Wire to UNO	Notes
+RS	D12	
+E	D11	(Enable)
+D4	D5	
+D5	D4	
+D6	D3	
+D7	D2	
+RW	GND	(always write)
+VSS	GND	
+VDD	5 V	
+VO	middle pin of a 10 kΩ pot (contrast). Ends of the pot go to 5 V and GND. Wokwi’s LCD part already shows a built-in pot you can drag to adjust.	
+
+That wiring is exactly what the LiquidCrystal library expects. 
+wokwi.com
+
+(Tip: if you’d rather skip the potentiometer, set the LCD part’s “contrast” property to something around “45” in the right-hand inspector.)
+
+3 Run and watch
+Click the green ▶ Run button.
+
+The LCD immediately shows
+
+Copy
+Edit
+hello, world!
+0
+and the second line counts upward every second.
+
+Need to tweak contrast? Turn the little pot just above pin 3 on the virtual LCD.
+
+4 Common hiccups
+Symptom	Quick check
+White rectangles / no text	Adjust the contrast pot or property.
+“LCD doesn’t work” compile error	Did you keep the #include <LiquidCrystal.h> line?
+Nothing counts, only “hello, world!”	You copied code but removed millis()/1000 in loop().
+Wrong / garbled characters	Verify every LCD data pin is on the correct Arduino pin (no swaps).
+
+5 Want the wiring done for you?
+Paste this diagram.json next to sketch.ino (or click “Import Project” on Wokwi and drop it in). It wires everything exactly like the list above:
+
+json
+Copy
+Edit
+{
+  "version": 1,
+  "author": "you",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-arduino-uno", "id": "uno", "top": 0, "left": 0 },
+    { "type": "wokwi-lcd1602", "id": "lcd",  "top": -130, "left": 210,
+      "attrs": { "pins": "rs:12,en:11,d4:5,d5:4,d6:3,d7:2" } }
+  ],
+  "connections": [
+    ["uno:GND.2", "lcd:GND"],
+    ["uno:5V",    "lcd:VCC"]
+  ]
+}
+When you reopen or run, Wokwi will auto-route the six data lines plus RS/E for you because they’re declared in the pins attribute.
+
+That’s it – paste code, add the LCD part, wire eight pins (or drop in the JSON), hit Run, and watch your “hello, world!” count the seconds right inside your browser. Have fun experimenting!
+
+
+
+
+
+
+
+
+
+
+Sources
+
+
+
+
+Tools
+
+
+
+ChatGPT can make mistakes. Check important info. See Cookie Preferences.
