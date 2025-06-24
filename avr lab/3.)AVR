@@ -10,6 +10,13 @@ inc r19
 l1:  dec r17 
 brne top  
 here:rjmp here 
+or 
+.org 0
+ldi r16,128
+ldi r17,16
+subi r17,1
+and r17,r16
+here:jmp here
 
 O/P:-
 🔍 5. View the Output
