@@ -44,6 +44,7 @@ insert into department values('research',5,'12345678','2023-01-01');
 3.)
 
 insert into dependent values('12345678','Sarah Smith','F','2016-10-20','spouse');
+insert into dependent values('12345678','john','m','2005-5-25','child');
         insert into dependent values ('12345678','michal smith','m','2016-02-10','child');
         insert into dependent values ('12345555','emma moya','f','2018-07-15','child');
         insert into dependent values('45678321','liam rajput','m','2020-03-30','child');
